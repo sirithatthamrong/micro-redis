@@ -26,7 +26,8 @@ pub fn execute_get_cmd(key: String, db: &Arc<Mutex<HashMap<u8, Database>>>, sele
     println!("Key: {:?}", key);
 
     match cur_db.data.get(&key) {
-        Some(value) => Ok(format!("+{}\r\n", value)),
+        Some(Data::Scalar(value)) => Ok(format!("+{}\r\n", value)),
+        Some(Data::List(_)) => Err("Wrong Type Operation against a key holding the wrong kind of value"),
         None => Ok("$-1\r\n".to_string()), // RESP2 Null Bulk String for non-existent key
     }
 }
